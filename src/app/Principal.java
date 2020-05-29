@@ -108,8 +108,10 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
             public void actionPerformed(ActionEvent e) {
 
                 cont++;
-                if (cont == 50) {
+                if (cont >= 50 && cont < 60) {
                     tiempo.setForeground(Color.RED);
+                } else {
+                    tiempo.setForeground(null);
                 }
 
                 if (cont == 60) {
@@ -136,14 +138,18 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
     }
 
     public void destruccion() {
-        cbA.removeAllItems();
-        cbB.removeAllItems();
-        txt1.setText("");
-        txt2.setText("");
-        lblTamano.setText("Nro elementos: 0");
-        cbB.setToolTipText("No hay elemento seleccionado");
-        lblIndice.setText("Sin seleccionar");
-        tiempo.setForeground(null);
+        try {
+            cbA.removeAllItems();
+            cbB.removeAllItems();
+            txt1.setText("");
+            txt2.setText("");
+            lblTamano.setText("Nro elementos: 0");
+            cbB.setToolTipText("No hay elemento seleccionado");
+            lblIndice.setText("Sin seleccionar");
+        } catch (NullPointerException e) {
+            System.out.println("tas pasao 1");
+        }
+        
     }
 
     public void traspasar(JComboBox<String> cbm1, JComboBox<String> cbm2) {
@@ -152,8 +158,12 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
             cbm2.addItem(cbm1.getSelectedItem().toString());
             cbm1.removeItem(cbm1.getSelectedItem());
             lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
+            lblIndice.setText(String.format("Indice: %s",
+                    cbA.getSelectedIndex() == -1 ? "No hay elementos" : Integer.toString(cbA.getSelectedIndex())));
+            cbB.setToolTipText(String.format("Indice: %s",
+                    cbB.getSelectedIndex() == -1 ? "Vacio" : Integer.toString(cbB.getSelectedIndex())));
         } catch (NullPointerException e) {
-            System.out.println("El ComboBox esta vacio");
+            System.err.println("El ComboBox esta vacio");
         }
 
     }
@@ -161,10 +171,17 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
     @Override
     public void itemStateChanged(ItemEvent e) {
         cont = 0;
-        if (e.getStateChange() == ItemEvent.SELECTED) {
-            lblIndice.setText(String.format("Indice: %d", cbA.getSelectedIndex() + 1));
-            cbB.setToolTipText(String.format("Indice: %d", cbB.getSelectedIndex() + 1));
+        try {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                lblIndice.setText(String.format("Indice: %s",
+                        cbA.getSelectedIndex() == -1 ? "No hay elementos" : Integer.toString(cbA.getSelectedIndex())));
+                cbB.setToolTipText(String.format("Indice: %s",
+                        cbB.getSelectedIndex() == -1 ? "Vacio" : Integer.toString(cbB.getSelectedIndex())));
+            }
+        } catch (NullPointerException exc) {
+            System.out.println("tas pasao 2");
         }
+        
 
     }
 
@@ -174,13 +191,18 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
         cont = 0;
 
         if (e.getSource() == btnAnadir) {
-            if (!txt1.getText().trim().isEmpty()) {
-                for (int i = 0; i < txt1.getText().trim().split(";").length; i++) {
-                    cbA.addItem(txt1.getText().trim().split(";")[i]);
+            try {
+                if (!txt1.getText().trim().isEmpty()) {
+                    for (int i = 0; i < txt1.getText().trim().split(";").length; i++) {
+                        cbA.addItem(txt1.getText().trim().split(";")[i]);
+                    }
+                    txt1.setText("");
+                    lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
                 }
-                txt1.setText("");
-                lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
+            } catch (NullPointerException exc) {
+                System.err.println("Tas pasao 2");
             }
+           
         }
 
         if (e.getSource() == btnQuitar) {
@@ -188,16 +210,21 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
             if (txt2.getText().trim().isEmpty()) {
                 try {
                     cbA.removeItemAt(cbA.getSelectedIndex());
+                    lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
                 } catch (ArrayIndexOutOfBoundsException exec) {
-                    System.out.println("tas pasao");
-                }
+                    System.out.println("tas pasao 3");
+                } 
             } else {
                 int size = cbA.getItemCount();
                 for (int i = 0; i < size; i++) {
-                    if (cbA.getItemAt(i).toString().indexOf(txt2.getText().trim()) == 0) {
-                        cbA.removeItemAt(i);
-                        size--;
-                        lblTamano.setText(String.format("Nro elementos: %d", Integer.toString(cbA.getItemCount())));
+                    try {
+                        if (cbA.getItemAt(10).toString().indexOf(txt2.getText().trim()) == 0) {
+                            cbA.removeItemAt(i);
+                            size--;
+                            lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
+                        }
+                    } catch (NullPointerException exc) {
+                        System.err.println("Tas pasao 4");
                     }
                 }
             }
