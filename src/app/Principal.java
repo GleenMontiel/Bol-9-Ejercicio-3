@@ -218,7 +218,7 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
                 int size = cbA.getItemCount();
                 for (int i = 0; i < size; i++) {
                     try {
-                        if (cbA.getItemAt(10).toString().indexOf(txt2.getText().trim()) == 0) {
+                        if (cbA.getItemAt(i).toString().indexOf(txt2.getText().trim()) == 0) {
                             cbA.removeItemAt(i);
                             size--;
                             lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
