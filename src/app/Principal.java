@@ -149,17 +149,25 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
 
     }
 
+    public void refrescar() {
+        lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
+        lblIndice.setText(String.format("Indice: %s",
+                cbA.getSelectedIndex() == -1 ? "No hay elementos" : Integer.toString(cbA.getSelectedIndex())));
+        cbB.setToolTipText(String.format("Indice: %s",
+                cbB.getSelectedIndex() == -1 ? "Vacio" : Integer.toString(cbB.getSelectedIndex())));
+        lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
+
+        System.out.println("Refrequeishun");
+
+    }
+
     public void traspasar(JComboBox<String> cbm1, JComboBox<String> cbm2) {
 
         cont = 0;
         if (!(cbm1.getItemCount() == 0)) {
             cbm2.addItem(cbm1.getSelectedItem().toString());
             cbm1.removeItem(cbm1.getSelectedItem());
-            lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
-            lblIndice.setText(String.format("Indice: %s",
-                    cbA.getSelectedIndex() == -1 ? "No hay elementos" : Integer.toString(cbA.getSelectedIndex())));
-            cbB.setToolTipText(String.format("Indice: %s",
-                    cbB.getSelectedIndex() == -1 ? "Vacio" : Integer.toString(cbB.getSelectedIndex())));
+            refrescar();
         } else {
             System.err.println("El ComboBox esta vacio");
         }
@@ -170,11 +178,7 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
         cont = 0;
 
         if (e.getStateChange() == ItemEvent.SELECTED) {
-
-            lblIndice.setText(String.format("Indice: %s",
-                    cbA.getSelectedIndex() == -1 ? "No hay elementos" : Integer.toString(cbA.getSelectedIndex())));
-            cbB.setToolTipText(String.format("Indice: %s",
-                    cbB.getSelectedIndex() == -1 ? "Vacio" : Integer.toString(cbB.getSelectedIndex())));
+            refrescar();
         }
 
     }
@@ -186,30 +190,27 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
 
         if (e.getSource() == btnAnadir) {
 
-            if (txt1.getText() != null) {
+            if (!txt1.getText().trim().isEmpty()) {
                 for (int i = 0; i < txt1.getText().trim().split(";").length; i++) {
                     cbA.addItem(txt1.getText().trim().split(";")[i]);
                 }
                 txt1.setText("");
-                lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
+
             }
 
         }
 
         if (e.getSource() == btnQuitar) {
 
-            if (txt2.getText() == null) {
-
+            if (txt2.getText().trim().isEmpty()) {
                 cbA.removeItem(cbA.getSelectedItem());
-                lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
-            } else {
-                int size = cbA.getItemCount();
-                for (int i = 0; i < size; i++) {
 
+            } else {
+                for (int i = 0; i < cbA.getItemCount(); i++) {
                     if (cbA.getItemAt(i).toString().indexOf(txt2.getText().trim()) == 0) {
                         cbA.removeItemAt(i);
-                        size--;
-                        lblTamano.setText(String.format("Nro elementos: %d", cbA.getItemCount()));
+                        i--;
+
                     }
 
                 }
@@ -225,7 +226,7 @@ public class Principal extends JFrame implements ActionListener, ItemListener {
 
             traspasar(cbA, cbB);
         }
-
+        refrescar();
     }
 
     private class MouseHandler extends MouseAdapter {
